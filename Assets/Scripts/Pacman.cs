@@ -5,6 +5,7 @@ using UnityEngine.InputSystem;
 public class Pacman : MonoBehaviour
 {
     private Movement movement;
+    private Vector2 bufferedMoveDirection;
     private LayerMask obstacleLayer;
 
     void Awake()
@@ -49,6 +50,12 @@ public class Pacman : MonoBehaviour
         }
     }
 
+    void FixedUpdate()
+    {
+        // So that the player can press a direction even before they hit the actual turn
+        changeMovementDirection(bufferedMoveDirection);
+    }
+
     private void changeMovementDirection(Vector2 direction)
     {
         if (direction == Vector2.zero || direction == movement.direction)
@@ -58,9 +65,11 @@ public class Pacman : MonoBehaviour
 
         if (isWallCollision(direction))
         {
+            bufferedMoveDirection = direction;
             return;
         }
 
+        bufferedMoveDirection = Vector2.zero;
         movement.direction = direction;
 
         float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
