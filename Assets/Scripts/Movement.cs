@@ -23,4 +23,14 @@ public class Movement : MonoBehaviour
 
         position.MovePosition(position.position + direction * speed * Time.fixedDeltaTime);
     }
+
+    public void snapToGrid()
+    {
+        Vector2 snapped = new Vector2(
+            Mathf.Round(position.position.x - 0.5f) + 0.5f,
+            Mathf.Round(position.position.y - 0.5f) + 0.5f
+        );
+
+        position.position = snapped;
+    }
 }

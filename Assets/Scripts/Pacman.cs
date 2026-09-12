@@ -47,6 +47,7 @@ public class Pacman : MonoBehaviour
         if (movement.direction != Vector2.zero && isWallCollision(movement.direction))
         {
             movement.direction = Vector2.zero;
+            movement.snapToGrid();
         }
     }
 
