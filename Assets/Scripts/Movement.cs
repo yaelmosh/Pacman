@@ -11,7 +11,9 @@ public class Movement : MonoBehaviour
 
     private void Awake()
     {
-        position = GetComponent<Rigidbody2D>();
+        position = GetComponent<Rigidbody2D>();        
+        collisionLayer = LayerMask.GetMask("Obstacle");
+
     }
 
     private void FixedUpdate()
@@ -21,7 +23,35 @@ public class Movement : MonoBehaviour
             return;
         }
 
+        if (isWallCollision(direction))
+        {
+            snapToGrid();
+            return;
+        }
+
         position.MovePosition(position.position + direction * speed * Time.fixedDeltaTime);
+    }
+
+    public bool changeMovementDirection(Vector2 newDirection)
+    {
+        if (newDirection == Vector2.zero || newDirection == direction)
+        {
+            return false;
+        }
+
+        if (isWallCollision(newDirection))
+        {
+            return false;
+        }
+
+        direction = newDirection;
+        return true;
+    }
+
+    private bool isWallCollision(Vector2 testDirection)
+    {
+        RaycastHit2D hit = Physics2D.BoxCast(transform.position, Vector2.one * 0.75f, 0, testDirection, 0.25f, collisionLayer);
+        return hit.collider != null;
     }
 
     public void snapToGrid()
