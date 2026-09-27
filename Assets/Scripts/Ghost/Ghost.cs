@@ -1,12 +1,15 @@
 using UnityEngine;
 
 [RequireComponent(typeof(Ghost))]
+// Behaviors
 [RequireComponent(typeof(MoveRandomly))]
 [RequireComponent(typeof(Chase))]
+[RequireComponent(typeof(RunAway))]
 public class Ghost : MonoBehaviour
 {
     private Chase chaseBehavior;
     private MoveRandomly moveRandomlyBehavior;
+    private RunAway runAwayBehavior;
     public Movement movement { get; private set; }
 
     public Transform pacman;
@@ -16,6 +19,7 @@ public class Ghost : MonoBehaviour
         movement = GetComponent<Movement>();
         chaseBehavior = GetComponent<Chase>();
         moveRandomlyBehavior = GetComponent<MoveRandomly>();
+        runAwayBehavior = GetComponent<RunAway>();
     }
 
     private void Start()

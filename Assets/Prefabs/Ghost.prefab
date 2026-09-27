@@ -105,6 +105,8 @@ GameObject:
   - component: {fileID: 7746909057261460647}
   - component: {fileID: -5058733624777411708}
   - component: {fileID: 8354731075029178825}
+  - component: {fileID: 4953264365757325054}
+  - component: {fileID: 8128996898843750214}
   m_Layer: 7
   m_Name: Ghost
   m_TagString: Untagged
@@ -231,12 +233,41 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2527049694702228487}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 101ded8a7e18c64449f5fdbe92eafd89, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MoveRandomly
-  duration: 0
+  duration: 8
+  nextDirection: {x: 0, y: 0}
+--- !u!114 &4953264365757325054
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2527049694702228487}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4c319a6919119114cb16a67e2be3329d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Chase
+  duration: 8
+  nextDirection: {x: 0, y: 0}
+--- !u!114 &8128996898843750214
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2527049694702228487}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c760a3f16e845ba4584fa8ccb2e20fa9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RunAway
+  duration: 8
+  nextDirection: {x: 0, y: 0}
 --- !u!1 &4045754716117322498
 GameObject:
   m_ObjectHideFlags: 0

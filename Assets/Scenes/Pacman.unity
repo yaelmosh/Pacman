@@ -927,6 +927,14 @@ PrefabInstance:
       propertyPath: pacman
       value: 
       objectReference: {fileID: 403760294}
+    - target: {fileID: 8128996898843750214, guid: 2385a361c7533aa4e8ba99b5b37d0c65, type: 3}
+      propertyPath: duration
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 8128996898843750214, guid: 2385a361c7533aa4e8ba99b5b37d0c65, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8354731075029178825, guid: 2385a361c7533aa4e8ba99b5b37d0c65, type: 3}
       propertyPath: duration
       value: 8
