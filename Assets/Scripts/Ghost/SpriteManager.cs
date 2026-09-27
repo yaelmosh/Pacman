@@ -8,6 +8,7 @@ public class SpriteManager : MonoBehaviour
     
     private SpriteAnimator spriteAnimator;
     private SpriteRenderer eyesSpriteRenderer;
+    private SpriteRenderer bodySpriteRenderer;
     private Ghost ghost;
     private GhostState lastAppliedState;
     
@@ -20,6 +21,7 @@ public class SpriteManager : MonoBehaviour
         ghost = GetComponentInParent<Ghost>();
         spriteAnimator = GetComponent<SpriteAnimator>();
         eyesSpriteRenderer = ghost.gameObject.GetComponentInChildren<SpriteRenderer>();
+        bodySpriteRenderer = GetComponent<SpriteRenderer>();
     }
 
     private void Start()
@@ -37,18 +39,27 @@ public class SpriteManager : MonoBehaviour
         if (ghost.state == GhostState.Vulnerable)
         {
             eyesSpriteRenderer.enabled = false;
+            bodySpriteRenderer.enabled = true;
             spriteAnimator.updateSprites(vulnerableSprites);
         }
 
         else if (ghost.state == GhostState.VulnerableEnd)
         {
             eyesSpriteRenderer.enabled = false;
+            bodySpriteRenderer.enabled = true;
             spriteAnimator.updateSprites(vulnerableSprites.Concat(vulnerableEndSprites).ToArray());
+        }
+
+        else if (ghost.state == GhostState.Eaten)
+        {
+            eyesSpriteRenderer.enabled = true;
+            bodySpriteRenderer.enabled = false;
         }
 
         else if (ghost.state == GhostState.Normal)
         {
             eyesSpriteRenderer.enabled = true;
+            bodySpriteRenderer.enabled = true;
             spriteAnimator.updateSprites(bodySprites);
         }
 

@@ -37,6 +37,11 @@ public class GameManager : MonoBehaviour
         pacman.gameObject.SetActive(true);
     }
 
+    public void onEatGhost(Ghost ghost)
+    {
+        score += ghost.points;
+    }
+
     public void onEatPellet(Pellet pellet)
     {
         pellet.gameObject.SetActive(false);
@@ -44,7 +49,7 @@ public class GameManager : MonoBehaviour
 
         if (wereAllPelletsEaten())
         {
-            Invoke(nameof(Start), 3.0f); // Properly display game won instead
+            Invoke(nameof(Start), 3.0f); // TODO Properly display game won instead
             return;
         }
 

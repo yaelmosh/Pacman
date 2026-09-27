@@ -7,16 +7,20 @@ public enum GhostState { Normal, Vulnerable, VulnerableEnd, Eaten }
 [RequireComponent(typeof(MoveRandomly))]
 [RequireComponent(typeof(Chase))]
 [RequireComponent(typeof(RunAway))]
+[RequireComponent(typeof(GoHome))]
 public class Ghost : MonoBehaviour
 {
     private Chase chaseBehavior;
     private MoveRandomly moveRandomlyBehavior;
     private RunAway runAwayBehavior;
+    private GoHome goHomeBehavior;
     public Movement movement { get; private set; }
     public GhostState state { get; private set; } = GhostState.Normal;
 
     public Transform pacman;
+    public Transform homeNode;
     public float vulnerableEndDuration = 3;
+    public int points = 200;
 
     private void Awake()
     {
@@ -24,6 +28,7 @@ public class Ghost : MonoBehaviour
         chaseBehavior = GetComponent<Chase>();
         moveRandomlyBehavior = GetComponent<MoveRandomly>();
         runAwayBehavior = GetComponent<RunAway>();
+        goHomeBehavior = GetComponent<GoHome>();
     }
 
     private void Start()
@@ -46,6 +51,11 @@ public class Ghost : MonoBehaviour
 
     public void setVulnerable()
     {
+        if (state == GhostState.Eaten)
+        {
+            return;
+        }
+
         CancelInvoke();
         chaseBehavior.disableBehavior(false);
         moveRandomlyBehavior.disableBehavior(false);
@@ -64,5 +74,50 @@ public class Ghost : MonoBehaviour
     private void setNormal()
     {
         state = GhostState.Normal;
+    }
+
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.gameObject.name == "HomeNode")
+        {
+            if (state == GhostState.Eaten)
+            {
+                regenerate();
+            }
+            return;
+        }
+
+        if (other.gameObject.layer != LayerMask.NameToLayer("Pacman"))
+        {
+            return;
+        }
+
+        if (state == GhostState.Vulnerable || state == GhostState.VulnerableEnd)
+        {
+            setEaten();
+            return;
+        }
+
+        if (state == GhostState.Normal)
+        {
+            // TODO Kill pacman
+        }
+    }
+
+    public void setEaten()
+    {
+        CancelInvoke();
+        runAwayBehavior.disableBehavior(false);
+        goHomeBehavior.enableBehavior();
+        GameManager.Instance.onEatGhost(this);
+        state = GhostState.Eaten;
+    }
+
+    public void regenerate()
+    {
+        CancelInvoke();
+        goHomeBehavior.disableBehavior(false);
+        moveRandomlyBehavior.enableBehavior();
+        setNormal();
     }
 }
