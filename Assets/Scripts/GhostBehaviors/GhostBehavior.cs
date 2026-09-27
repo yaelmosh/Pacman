@@ -9,7 +9,7 @@ public abstract class GhostBehavior : MonoBehaviour
     [HideInInspector]
     public Vector2 nextDirection = Vector2.zero;
 
-    private void Awake()
+    protected virtual void Awake()
     {
         ghost = GetComponent<Ghost>();
         // enabled = false;
