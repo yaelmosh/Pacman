@@ -104,6 +104,7 @@ GameObject:
   - component: {fileID: 941616118578342927}
   - component: {fileID: 7746909057261460647}
   - component: {fileID: -5058733624777411708}
+  - component: {fileID: 8354731075029178825}
   m_Layer: 7
   m_Name: Ghost
   m_TagString: Untagged
@@ -186,6 +187,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f1c113ba0735e94ebaec81e59faeab7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Ghost
+  pacman: {fileID: 0}
 --- !u!58 &-5058733624777411708
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -222,6 +224,19 @@ CircleCollider2D:
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
   m_Radius: 0.5
+--- !u!114 &8354731075029178825
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2527049694702228487}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 101ded8a7e18c64449f5fdbe92eafd89, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MoveRandomly
+  duration: 0
 --- !u!1 &4045754716117322498
 GameObject:
   m_ObjectHideFlags: 0

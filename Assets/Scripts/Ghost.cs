@@ -1,16 +1,14 @@
 using UnityEngine;
 
+[RequireComponent(typeof(Ghost))]
 public class Ghost : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
-    }
+    public Movement movement { get; private set; }
 
-    // Update is called once per frame
-    void Update()
+    public Transform pacman;
+
+    private void Awake()
     {
-        
+        movement = GetComponent<Movement>();
     }
 }
