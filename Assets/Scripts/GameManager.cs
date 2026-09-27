@@ -50,7 +50,10 @@ public class GameManager : MonoBehaviour
 
         if (pellet is PowerPellet)
         {
-            // Make ghosts scared
+            foreach (Ghost ghost in ghosts)
+            {
+                ghost.setVulnerable();
+            }
         }
     }
 

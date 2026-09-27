@@ -19,13 +19,23 @@ public abstract class GhostBehavior : MonoBehaviour
     {
         enabled = true;
         CancelInvoke();
-        Invoke(nameof(disableBehavior), duration);
+        Invoke(nameof(disableBehaviorFromTimeout), duration);
     }
 
-    private void disableBehavior()
+    private void disableBehaviorFromTimeout()
+    {
+        disableBehavior();
+    }
+
+    public void disableBehavior(bool propagateToGhost = true)
     {
         enabled = false;
-        ghost.onBehaviorDurationExpired(this);
+        CancelInvoke();
+
+        if (propagateToGhost)
+        {
+            ghost.onBehaviorDurationExpired(this);
+        }
     }
 
     private void OnTriggerEnter2D(Collider2D other)
