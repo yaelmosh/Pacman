@@ -12,7 +12,7 @@ public abstract class GhostBehavior : MonoBehaviour
     protected virtual void Awake()
     {
         ghost = GetComponent<Ghost>();
-        // enabled = false;
+        enabled = false;
     }
 
     public void enableBehavior()
@@ -25,6 +25,7 @@ public abstract class GhostBehavior : MonoBehaviour
     private void disableBehavior()
     {
         enabled = false;
+        ghost.onBehaviorDurationExpired(this);
     }
 
     private void OnTriggerEnter2D(Collider2D other)
