@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1203410991735278173}
   - component: {fileID: 5535367641474532959}
+  - component: {fileID: 4443631981948038480}
   m_Layer: 7
   m_Name: Eyes
   m_TagString: Untagged
@@ -91,6 +92,22 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
+--- !u!114 &4443631981948038480
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2034956373814388817}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b8b393ce1455604d85c590c728f77c6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Eyes
+  up: {fileID: 21300000, guid: a11e30b3f44d22a4586e67e70b82b6a6, type: 3}
+  down: {fileID: 21300000, guid: 66d1b0aed8d727b43978cc8fa39d94a6, type: 3}
+  left: {fileID: 21300000, guid: 0a75f6bc0da3fba46b65b5f64ce6a079, type: 3}
+  right: {fileID: 21300000, guid: 839286ef616bff44cbbe3e166b3659a1, type: 3}
 --- !u!1 &2527049694702228487
 GameObject:
   m_ObjectHideFlags: 0
