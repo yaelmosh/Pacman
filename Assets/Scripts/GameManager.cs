@@ -23,11 +23,8 @@ public class GameManager : MonoBehaviour
     {
         score = 0;
         lives = defaultMaxLives;
-        
-        foreach (Transform pellet in pellets)
-        {
-            pellet.gameObject.SetActive(true);
-        }
+        pellets.Cast<Transform>().ToList().ForEach(pellet => pellet.gameObject.SetActive(true));
+
 
         foreach (Ghost ghost in ghosts)
         {
@@ -55,23 +52,12 @@ public class GameManager : MonoBehaviour
 
         if (pellet is PowerPellet)
         {
-            foreach (Ghost ghost in ghosts)
-            {
-                ghost.setVulnerable();
-            }
+            ghosts.ToList().ForEach(ghost => ghost.setVulnerable());
         }
     }
 
     private bool wereAllPelletsEaten()
     {
-        foreach (Transform pellet in pellets)
-        {
-            if (pellet.gameObject.activeSelf)
-            {
-                return false;
-            }
-        }
-
-        return true;
+        return pellets.Cast<Transform>().All(pellet => !pellet.gameObject.activeSelf);
     }
 }
