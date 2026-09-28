@@ -15,6 +15,7 @@ public class SpriteManager : MonoBehaviour
     public Sprite[] bodySprites;
     public Sprite[] vulnerableSprites;
     public Sprite[] vulnerableEndSprites;
+    public Color bodyColor = Color.white;
 
     private void Awake()
     {
@@ -26,6 +27,7 @@ public class SpriteManager : MonoBehaviour
 
     private void Start()
     {
+        bodySpriteRenderer.color = bodyColor;
         spriteAnimator.updateSprites(bodySprites);
     }
 
@@ -40,6 +42,7 @@ public class SpriteManager : MonoBehaviour
         {
             eyesSpriteRenderer.enabled = false;
             bodySpriteRenderer.enabled = true;
+            bodySpriteRenderer.color = Color.white;
             spriteAnimator.updateSprites(vulnerableSprites);
         }
 
@@ -47,6 +50,7 @@ public class SpriteManager : MonoBehaviour
         {
             eyesSpriteRenderer.enabled = false;
             bodySpriteRenderer.enabled = true;
+            bodySpriteRenderer.color = Color.white;
             spriteAnimator.updateSprites(vulnerableSprites.Concat(vulnerableEndSprites).ToArray());
         }
 
@@ -60,6 +64,7 @@ public class SpriteManager : MonoBehaviour
         {
             eyesSpriteRenderer.enabled = true;
             bodySpriteRenderer.enabled = true;
+            bodySpriteRenderer.color = bodyColor;
             spriteAnimator.updateSprites(bodySprites);
         }
 
