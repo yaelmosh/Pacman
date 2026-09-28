@@ -100,7 +100,7 @@ public class Ghost : MonoBehaviour
 
         if (state == GhostState.Normal)
         {
-            // TODO Kill pacman
+            GameManager.Instance.onPacmanEaten();
         }
     }
 
