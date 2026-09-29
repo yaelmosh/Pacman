@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 [RequireComponent(typeof(BoxCollider2D))]
 public class Pellet : MonoBehaviour
@@ -11,5 +12,14 @@ public class Pellet : MonoBehaviour
         {
             GameManager.Instance.onEatPellet(this);
         }
+    }
+
+    // Tile only has a texture to be visible in tile pallete, rendering is handled by the prefab
+    // So we disable it here
+    private void Awake()
+    {
+        Tilemap tilemap = GetComponentInParent<Tilemap>();
+        Vector3Int cellPosition = tilemap.WorldToCell(transform.position);
+        tilemap.SetTile(cellPosition, null);
     }
 }

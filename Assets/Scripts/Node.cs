@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 public class Node : MonoBehaviour
 {
@@ -13,5 +14,14 @@ public class Node : MonoBehaviour
         LayerMask collisionLayer = LayerMask.GetMask("Obstacle");
 
         availableTurns = directions.Where(direction => !Physics2D.BoxCast(transform.position, Vector2.one * 0.5f, 0, direction, 1, collisionLayer)).ToList();
+    }
+
+    // Tile only has a texture to be visible in tile pallete, rendering is handled by the prefab
+    // So we disable it here
+    private void Awake()
+    {
+        Tilemap tilemap = GetComponentInParent<Tilemap>();
+        Vector3Int cellPosition = tilemap.WorldToCell(transform.position);
+        tilemap.SetTile(cellPosition, null);
     }
 }
