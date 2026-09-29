@@ -29,4 +29,10 @@ public class SpriteAnimator : MonoBehaviour
         currentSpriteIndex = (currentSpriteIndex + 1) % sprites.Length;
         spriteRenderer.sprite = sprites[currentSpriteIndex];
     }
+
+    public void updateSprites(Sprite[] newSprites)
+    {
+        sprites = newSprites;
+        updateCurrentSprite();
+    }
 }
