@@ -28,6 +28,8 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
+        Debug.Log("Resetting game state");
+
         score = 0;
         lives = defaultMaxLives;
         pellets.Cast<Transform>().ToList().ForEach(pellet => pellet.gameObject.SetActive(true));
@@ -55,6 +57,7 @@ public class GameManager : MonoBehaviour
 
         if (wereAllPelletsEaten())
         {
+            Debug.Log("Game won!");
             onPacmanEaten();
             return;
         }

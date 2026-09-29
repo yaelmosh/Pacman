@@ -100,6 +100,7 @@ public class Ghost : MonoBehaviour
 
         if (state == GhostState.Normal)
         {
+            Debug.Log("Pacman eaten, game lost");
             GameManager.Instance.onPacmanEaten();
         }
     }
@@ -115,6 +116,7 @@ public class Ghost : MonoBehaviour
 
     public void regenerate()
     {
+        Debug.Log("Ghost regenerating");
         CancelInvoke();
         goHomeBehavior.disableBehavior(false);
         moveRandomlyBehavior.enableBehavior();
