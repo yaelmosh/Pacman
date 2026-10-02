@@ -356,6 +356,7 @@ MonoBehaviour:
   vulnerableEndSprites:
   - {fileID: -4033309646893196344, guid: 5a9ceef033b0c78498832e48a43f8518, type: 3}
   - {fileID: -4866370356465674644, guid: 92173c703c4c78641a9d49adebf5339f, type: 3}
+  bodyColor: {r: 1, g: 1, b: 1, a: 1}
 --- !u!212 &1798209416724701005
 SpriteRenderer:
   serializedVersion: 2

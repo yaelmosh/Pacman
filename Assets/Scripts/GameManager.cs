@@ -1,22 +1,28 @@
 using System.Linq;
+using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 [DefaultExecutionOrder(-100)]
 public class GameManager : MonoBehaviour
 {
     private const int defaultMaxLives = 3;
+    private const float deathScreenDuration = 1.0f;
 
     public static GameManager Instance { get; private set; }
 
     public Ghost[] ghosts;
     public Pacman pacman;
     public Transform pellets;
+    public TextMeshProUGUI scoreText;
+    public TextMeshProUGUI livesText;
 
     public int score { get; private set; }
     public int lives { get; private set; }
 
     private Vector3 pacmanInitialPosition;
     private Vector3[] ghostInitialPositions;
+    private Image deathScreen;
 
     private void Awake()
     {
@@ -24,6 +30,16 @@ public class GameManager : MonoBehaviour
 
         pacmanInitialPosition = pacman.transform.position;
         ghostInitialPositions = ghosts.Select(ghost => ghost.transform.position).ToArray();
+
+        // Full-screen black Image, initially hidden; flashed briefly whenever Pacman dies.
+        // Optional - restart logic below works fine even if it hasn't been added to the scene yet.
+        deathScreen = FindObjectsByType<Image>(FindObjectsSortMode.None)
+            .FirstOrDefault(image => image.gameObject.name == "DeathScreen");
+
+        if (deathScreen != null)
+        {
+            deathScreen.enabled = false;
+        }
     }
 
     private void Start()
@@ -34,6 +50,13 @@ public class GameManager : MonoBehaviour
         lives = defaultMaxLives;
         pellets.Cast<Transform>().ToList().ForEach(pellet => pellet.gameObject.SetActive(true));
 
+        resetPositions();
+        updateScoreText();
+        updateLivesText();
+    }
+
+    private void resetPositions()
+    {
         foreach ((Ghost ghost, Vector3 position) in ghosts.Zip(ghostInitialPositions, (ghost, position) => (ghost, position)))
         {
             ghost.transform.position = position;
@@ -45,20 +68,27 @@ public class GameManager : MonoBehaviour
         pacman.gameObject.SetActive(true);
     }
 
+    private void deactivateEveryone()
+    {
+        ghosts.ToList().ForEach(ghost => ghost.gameObject.SetActive(false));
+        pacman.gameObject.SetActive(false);
+    }
+
     public void onEatGhost(Ghost ghost)
     {
-        score += ghost.points;
+        addScore(ghost.points);
     }
 
     public void onEatPellet(Pellet pellet)
     {
         pellet.gameObject.SetActive(false);
-        score += pellet.points;
+        addScore(pellet.points);
 
         if (wereAllPelletsEaten())
         {
             Debug.Log("Game won!");
-            onPacmanEaten();
+            deactivateEveryone();
+            Invoke(nameof(Start), 3.0f);
             return;
         }
 
@@ -70,15 +100,62 @@ public class GameManager : MonoBehaviour
 
     public void onPacmanEaten()
     {
-        ghosts.ToList().ForEach(ghost => ghost.gameObject.SetActive(false));
+        deactivateEveryone();
+        decrementLives();
+        showDeathScreen();
+    }
 
-        pacman.gameObject.SetActive(false);
+    private void showDeathScreen()
+    {
+        if (deathScreen != null)
+        {
+            deathScreen.enabled = true;
+        }
 
-        Invoke(nameof(Start), 3.0f);
+        Invoke(nameof(hideDeathScreenAndContinue), deathScreenDuration);
+    }
+
+    private void hideDeathScreenAndContinue()
+    {
+        if (deathScreen != null)
+        {
+            deathScreen.enabled = false;
+        }
+
+        if (lives > 0)
+        {
+            resetPositions();
+        }
+        else
+        {
+            Start();
+        }
     }
 
     private bool wereAllPelletsEaten()
     {
         return pellets.Cast<Transform>().All(pellet => !pellet.gameObject.activeSelf);
+    }
+
+    private void addScore(int points)
+    {
+        score += points;
+        updateScoreText();
+    }
+
+    private void decrementLives()
+    {
+        lives -= 1;
+        updateLivesText();
+    }
+
+    private void updateScoreText()
+    {
+        scoreText.text = $"SCORE: {score}";
+    }
+
+    private void updateLivesText()
+    {
+        livesText.text = $"LIVES: {lives}";
     }
 }
