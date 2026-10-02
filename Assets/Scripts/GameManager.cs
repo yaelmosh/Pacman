@@ -1,6 +1,7 @@
 using System.Linq;
 using TMPro;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 [DefaultExecutionOrder(-100)]
@@ -16,6 +17,8 @@ public class GameManager : MonoBehaviour
     public Transform pellets;
     public TextMeshProUGUI scoreText;
     public TextMeshProUGUI livesText;
+    public TextMeshProUGUI gameOverText;
+    public Button startButton;
 
     public int score { get; private set; }
     public int lives { get; private set; }
@@ -40,11 +43,37 @@ public class GameManager : MonoBehaviour
         {
             deathScreen.enabled = false;
         }
+
+        startButton.onClick.AddListener(onStartButtonClicked);
     }
 
     private void Start()
     {
-        Debug.Log("Resetting game state");
+        // Idle at a "press Start" state instead of auto-starting; startGame() does the real reset.
+        deactivateEveryone();
+        pellets.Cast<Transform>().ToList().ForEach(pellet => pellet.gameObject.SetActive(false));
+        gameOverText.gameObject.SetActive(false);
+        startButton.gameObject.SetActive(true);
+    }
+
+    private void Update()
+    {
+        if (startButton.gameObject.activeSelf && Keyboard.current != null && Keyboard.current.spaceKey.wasPressedThisFrame)
+        {
+            onStartButtonClicked();
+        }
+    }
+
+    private void onStartButtonClicked()
+    {
+        startButton.gameObject.SetActive(false);
+        gameOverText.gameObject.SetActive(false);
+        startGame();
+    }
+
+    private void startGame()
+    {
+        Debug.Log("Starting new game");
 
         score = 0;
         lives = defaultMaxLives;
@@ -88,7 +117,7 @@ public class GameManager : MonoBehaviour
         {
             Debug.Log("Game won!");
             deactivateEveryone();
-            Invoke(nameof(Start), 3.0f);
+            showEndScreen("YOU WIN!", Color.green);
             return;
         }
 
@@ -128,8 +157,16 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            Start();
+            showEndScreen("GAME OVER", Color.red);
         }
+    }
+
+    private void showEndScreen(string message, Color color)
+    {
+        gameOverText.text = message;
+        gameOverText.color = color;
+        gameOverText.gameObject.SetActive(true);
+        startButton.gameObject.SetActive(true);
     }
 
     private bool wereAllPelletsEaten()
