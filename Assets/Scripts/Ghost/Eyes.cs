@@ -23,7 +23,8 @@ public class Eyes : MonoBehaviour
             { Vector2.up, up },
             { Vector2.down, down },
             { Vector2.left, left },
-            { Vector2.right, right }
+            { Vector2.right, right },
+            { Vector2.zero, up },  // Fallback option
         };
     }
 

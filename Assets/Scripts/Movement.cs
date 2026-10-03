@@ -11,8 +11,8 @@ public class Movement : MonoBehaviour
 
     private void Awake()
     {
-        position = GetComponent<Rigidbody2D>();        
-        collisionLayer = LayerMask.GetMask("Obstacle");
+        position = GetComponent<Rigidbody2D>();
+        collisionLayer = LayerMask.GetMask("Obstacle", "Gate");
 
     }
 
@@ -52,6 +52,11 @@ public class Movement : MonoBehaviour
     {
         RaycastHit2D hit = Physics2D.BoxCast(transform.position, Vector2.one * 0.75f, 0, testDirection, 0.25f, collisionLayer);
         return hit.collider != null;
+    }
+
+    public bool isDirectionBlocked(Vector2 testDirection)
+    {
+        return isWallCollision(testDirection);
     }
 
     public void snapToGrid()

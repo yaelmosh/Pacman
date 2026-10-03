@@ -88,9 +88,10 @@ public class GameManager : MonoBehaviour
     {
         foreach ((Ghost ghost, Vector3 position) in ghosts.Zip(ghostInitialPositions, (ghost, position) => (ghost, position)))
         {
+            ghost.resetState();
             ghost.transform.position = position;
-            ghost.movement.direction = Vector2.right;
             ghost.gameObject.SetActive(true);
+            ghost.release();
         }
 
         pacman.transform.position = pacmanInitialPosition;

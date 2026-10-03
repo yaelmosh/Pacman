@@ -125,6 +125,7 @@ GameObject:
   - component: {fileID: 4953264365757325054}
   - component: {fileID: 8128996898843750214}
   - component: {fileID: 5913697878815397506}
+  - component: {fileID: 3225423254699217280}
   m_Layer: 7
   m_Name: Ghost
   m_TagString: Untagged
@@ -207,6 +208,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Ghost
   pacman: {fileID: 0}
   homeNode: {fileID: 0}
+  exitNode: {fileID: 0}
   vulnerableEndDuration: 3
   points: 200
 --- !u!58 &-5058733624777411708
@@ -301,6 +303,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::GoHome
   duration: 999
   nextDirection: {x: 0, y: 0}
+--- !u!114 &3225423254699217280
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2527049694702228487}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 41fe3527ec054e14cad9028bf5266d31, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LeaveHome
+  duration: 0
+  nextDirection: {x: 0, y: 0}
 --- !u!1 &5397870472039832748
 GameObject:
   m_ObjectHideFlags: 0
@@ -356,7 +372,7 @@ MonoBehaviour:
   vulnerableEndSprites:
   - {fileID: -4033309646893196344, guid: 5a9ceef033b0c78498832e48a43f8518, type: 3}
   - {fileID: -4866370356465674644, guid: 92173c703c4c78641a9d49adebf5339f, type: 3}
-  bodyColor: {r: 1, g: 1, b: 1, a: 1}
+  bodyColor: {r: 1, g: 0.5911307, b: 0, a: 1}
 --- !u!212 &1798209416724701005
 SpriteRenderer:
   serializedVersion: 2
@@ -407,7 +423,7 @@ SpriteRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_Sprite: {fileID: 628271541339416999, guid: d9c391c4e3f38cc47a5fe20b8c1c6e3c, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 0.5921569, b: 0, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
