@@ -36,5 +36,6 @@ public class Teleporter : MonoBehaviour
         position.y = exit.transform.position.y + direction.y * 1.5f;
 
         other.transform.position = position;
+        Debug.Log($"Teleporter used by {other.gameObject.name}");
     }
 }

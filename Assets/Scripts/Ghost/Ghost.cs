@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public enum GhostState { Normal, Vulnerable, VulnerableEnd, Eaten }
+public enum GhostState { Caged, Exiting, Normal, Vulnerable, VulnerableEnd, Eaten, EnteringHome }
 
 [RequireComponent(typeof(Ghost))]
 // Behaviors
@@ -8,17 +8,22 @@ public enum GhostState { Normal, Vulnerable, VulnerableEnd, Eaten }
 [RequireComponent(typeof(Chase))]
 [RequireComponent(typeof(RunAway))]
 [RequireComponent(typeof(GoHome))]
+[RequireComponent(typeof(LeaveHome))]
 public class Ghost : MonoBehaviour
 {
+    private static readonly Vector2[] cardinalDirections = { Vector2.up, Vector2.down, Vector2.left, Vector2.right };
+
     private Chase chaseBehavior;
     private MoveRandomly moveRandomlyBehavior;
     private RunAway runAwayBehavior;
     private GoHome goHomeBehavior;
+    private LeaveHome leaveHomeBehavior;
     public Movement movement { get; private set; }
-    public GhostState state { get; private set; } = GhostState.Normal;
+    public GhostState state { get; private set; } = GhostState.Caged;
 
     public Transform pacman;
     public Transform homeNode;
+    public Transform exitNode;
     public float vulnerableEndDuration = 3;
     public int points = 200;
 
@@ -29,11 +34,58 @@ public class Ghost : MonoBehaviour
         moveRandomlyBehavior = GetComponent<MoveRandomly>();
         runAwayBehavior = GetComponent<RunAway>();
         goHomeBehavior = GetComponent<GoHome>();
+        leaveHomeBehavior = GetComponent<LeaveHome>();
     }
 
-    private void Start()
+    public void release()
     {
-        moveRandomlyBehavior.enableBehavior();
+        if (state != GhostState.Caged)
+        {
+            return;
+        }
+
+        state = GhostState.Exiting;
+        movement.collisionLayer = LayerMask.GetMask("Obstacle");
+        leaveHomeBehavior.enableBehavior();
+
+        steerTowards(exitNode.position);
+    }
+
+    private void FixedUpdate()
+    {
+        if (state == GhostState.EnteringHome)
+        {
+            steerTowards(homeNode.position);
+        }
+    }
+
+    private const float steeringAlignedThreshold = 0.05f;
+
+    private void steerTowards(Vector3 target)
+    {
+        Vector2 delta = (Vector2)target - (Vector2)transform.position;
+
+        bool currentDirectionStillUseful = movement.direction.x != 0
+            ? Mathf.Sign(movement.direction.x) == Mathf.Sign(delta.x) && Mathf.Abs(delta.x) > steeringAlignedThreshold
+            : movement.direction.y != 0 && Mathf.Sign(movement.direction.y) == Mathf.Sign(delta.y) && Mathf.Abs(delta.y) > steeringAlignedThreshold;
+
+        if (currentDirectionStillUseful && !movement.isDirectionBlocked(movement.direction))
+        {
+            return;
+        }
+
+        Vector2 primary = Mathf.Abs(delta.x) > Mathf.Abs(delta.y)
+            ? new Vector2(Mathf.Sign(delta.x), 0)
+            : new Vector2(0, Mathf.Sign(delta.y));
+        Vector2 secondary = primary.x != 0
+            ? new Vector2(0, Mathf.Sign(delta.y))
+            : new Vector2(Mathf.Sign(delta.x), 0);
+
+        movement.direction = Vector2.zero;
+        if (!movement.changeMovementDirection(primary))
+        {
+            movement.changeMovementDirection(secondary);
+        }
     }
 
     public void onBehaviorDurationExpired(GhostBehavior behavior)
@@ -43,7 +95,7 @@ public class Ghost : MonoBehaviour
             chaseBehavior.enableBehavior();
         }
 
-        if (behavior is Chase || behavior is RunAway)
+        if (behavior.GetType() == typeof(Chase) || behavior is RunAway)
         {
             moveRandomlyBehavior.enableBehavior();
         }
@@ -51,7 +103,7 @@ public class Ghost : MonoBehaviour
 
     public void setVulnerable()
     {
-        if (state == GhostState.Eaten)
+        if (state == GhostState.Eaten || state == GhostState.Caged || state == GhostState.Exiting || state == GhostState.EnteringHome)
         {
             return;
         }
@@ -74,15 +126,36 @@ public class Ghost : MonoBehaviour
     private void setNormal()
     {
         state = GhostState.Normal;
+        movement.collisionLayer = LayerMask.GetMask("Obstacle", "Gate");
+    }
+
+    private void setCaged()
+    {
+        state = GhostState.Caged;
+        movement.direction = Vector2.zero;
+        movement.collisionLayer = LayerMask.GetMask("Obstacle", "Gate");
     }
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.gameObject.name == "HomeNode")
+        if (other.transform == homeNode)
         {
-            if (state == GhostState.Eaten)
+            if (state == GhostState.EnteringHome)
             {
-                regenerate();
+                arriveHome();
+            }
+            return;
+        }
+
+        if (other.transform == exitNode)
+        {
+            if (state == GhostState.Exiting)
+            {
+                finishExiting();
+            }
+            else if (state == GhostState.Eaten)
+            {
+                enterHomeThroughGate();
             }
             return;
         }
@@ -100,6 +173,7 @@ public class Ghost : MonoBehaviour
 
         if (state == GhostState.Normal)
         {
+            Debug.Log("Pacman eaten, game lost");
             GameManager.Instance.onPacmanEaten();
         }
     }
@@ -111,13 +185,59 @@ public class Ghost : MonoBehaviour
         goHomeBehavior.enableBehavior();
         GameManager.Instance.onEatGhost(this);
         state = GhostState.Eaten;
+        // Only eaten ghosts (heading home, or already parked there) may pass through the gate.
+        movement.collisionLayer = LayerMask.GetMask("Obstacle");
+
+        // Otherwise it just keeps going whatever way it was already fleeing until it
+        // happens to reach a real Node - turn towards home immediately instead.
+        steerTowards(exitNode.position);
     }
 
-    public void regenerate()
+    private void enterHomeThroughGate()
     {
+        Debug.Log("Ghost reached the gate, forcing it through to home");
         CancelInvoke();
         goHomeBehavior.disableBehavior(false);
-        moveRandomlyBehavior.enableBehavior();
+        state = GhostState.EnteringHome;
+    }
+
+    private void arriveHome()
+    {
+        Debug.Log("Ghost arrived home, staying put");
+        CancelInvoke();
+        movement.direction = Vector2.zero;
+        state = GhostState.Eaten;
+        // Back to GhostState.Eaten, parked at the Ghost House, until the round resets.
+    }
+
+    private void finishExiting()
+    {
+        Debug.Log("Ghost left the house");
+        CancelInvoke();
+        leaveHomeBehavior.disableBehavior(false);
         setNormal();
+        moveRandomlyBehavior.enableBehavior();
+
+        // No Node sits on ExitNode itself to drive a turn choice - try each direction in
+        // turn until one isn't immediately wall-blocked (e.g. a T-junction above the gate).
+        movement.direction = Vector2.zero;
+        foreach (Vector2 candidate in cardinalDirections)
+        {
+            if (movement.changeMovementDirection(candidate))
+            {
+                break;
+            }
+        }
+    }
+
+    public void resetState()
+    {
+        CancelInvoke();
+        chaseBehavior.disableBehavior(false);
+        runAwayBehavior.disableBehavior(false);
+        goHomeBehavior.disableBehavior(false);
+        leaveHomeBehavior.disableBehavior(false);
+        moveRandomlyBehavior.disableBehavior(false);
+        setCaged();
     }
 }
