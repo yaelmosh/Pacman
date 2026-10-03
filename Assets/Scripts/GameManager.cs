@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Linq;
 using TMPro;
 using UnityEngine;
@@ -132,21 +133,17 @@ public class GameManager : MonoBehaviour
     {
         deactivateEveryone();
         decrementLives();
-        showDeathScreen();
+        StartCoroutine(flashDeathScreenThenContinue());
     }
-
-    private void showDeathScreen()
+    private IEnumerator flashDeathScreenThenContinue()
     {
         if (deathScreen != null)
         {
             deathScreen.enabled = true;
         }
 
-        Invoke(nameof(hideDeathScreenAndContinue), deathScreenDuration);
-    }
+        yield return new WaitForSeconds(deathScreenDuration);
 
-    private void hideDeathScreenAndContinue()
-    {
         if (deathScreen != null)
         {
             deathScreen.enabled = false;

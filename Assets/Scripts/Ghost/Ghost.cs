@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public enum GhostState { Caged, Exiting, Normal, Vulnerable, VulnerableEnd, Eaten, EnteringHome }
@@ -26,6 +27,8 @@ public class Ghost : MonoBehaviour
     public Transform exitNode;
     public float vulnerableEndDuration = 3;
     public int points = 200;
+
+    private Coroutine vulnerabilityTimer;
 
     private void Awake()
     {
@@ -108,19 +111,32 @@ public class Ghost : MonoBehaviour
             return;
         }
 
-        CancelInvoke();
+        stopVulnerabilityTimer();
         chaseBehavior.disableBehavior(false);
         moveRandomlyBehavior.disableBehavior(false);
         runAwayBehavior.enableBehavior();
         state = GhostState.Vulnerable;
 
-        Invoke(nameof(setVulnerableEnd), runAwayBehavior.duration - vulnerableEndDuration);
+        vulnerabilityTimer = StartCoroutine(runVulnerablePhase());
     }
 
-    private void setVulnerableEnd()
+    private IEnumerator runVulnerablePhase()
     {
+        yield return new WaitForSeconds(runAwayBehavior.duration - vulnerableEndDuration);
         state = GhostState.VulnerableEnd;
-        Invoke(nameof(setNormal), vulnerableEndDuration);
+
+        yield return new WaitForSeconds(vulnerableEndDuration);
+        setNormal();
+        vulnerabilityTimer = null;
+    }
+
+    private void stopVulnerabilityTimer()
+    {
+        if (vulnerabilityTimer != null)
+        {
+            StopCoroutine(vulnerabilityTimer);
+            vulnerabilityTimer = null;
+        }
     }
 
     private void setNormal()
@@ -180,7 +196,7 @@ public class Ghost : MonoBehaviour
 
     public void setEaten()
     {
-        CancelInvoke();
+        stopVulnerabilityTimer();
         runAwayBehavior.disableBehavior(false);
         goHomeBehavior.enableBehavior();
         GameManager.Instance.onEatGhost(this);
@@ -196,7 +212,6 @@ public class Ghost : MonoBehaviour
     private void enterHomeThroughGate()
     {
         Debug.Log("Ghost reached the gate, forcing it through to home");
-        CancelInvoke();
         goHomeBehavior.disableBehavior(false);
         state = GhostState.EnteringHome;
     }
@@ -204,7 +219,6 @@ public class Ghost : MonoBehaviour
     private void arriveHome()
     {
         Debug.Log("Ghost arrived home, staying put");
-        CancelInvoke();
         movement.direction = Vector2.zero;
         state = GhostState.Eaten;
         // Back to GhostState.Eaten, parked at the Ghost House, until the round resets.
@@ -213,7 +227,6 @@ public class Ghost : MonoBehaviour
     private void finishExiting()
     {
         Debug.Log("Ghost left the house");
-        CancelInvoke();
         leaveHomeBehavior.disableBehavior(false);
         setNormal();
         moveRandomlyBehavior.enableBehavior();
@@ -232,7 +245,7 @@ public class Ghost : MonoBehaviour
 
     public void resetState()
     {
-        CancelInvoke();
+        stopVulnerabilityTimer();
         chaseBehavior.disableBehavior(false);
         runAwayBehavior.disableBehavior(false);
         goHomeBehavior.disableBehavior(false);
